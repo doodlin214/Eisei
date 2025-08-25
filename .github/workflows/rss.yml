@@ -1,0 +1,28 @@
+name: Update Notion RSS
+
+on:
+  schedule:
+    - cron: "0 1 * * *"   # Runs daily at 10:00 JST
+  workflow_dispatch:
+
+jobs:
+  rss:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          pip install requests feedparser python-dotenv
+
+      - name: Run RSS → Notion script
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+        run: python rss_to_notion.py
